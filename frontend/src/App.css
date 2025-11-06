@@ -1,0 +1,120 @@
+.App {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Custom button hover effects */
+.btn:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+/* Card hover effects */
+.card {
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Todo item animations */
+.list-group-item {
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Loading spinner center */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Statistics cards */
+.stats-card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar brand */
+.navbar-brand {
+  font-size: 1.5rem;
+}
+
+/* Form focus effects */
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Completed todo styling */
+.todo-completed {
+  opacity: 0.7;
+}
+
+/* Alert custom styling */
+.alert {
+  border: none;
+  border-radius: 8px;
+}
+
+/* Custom scrollbar */
+.list-group {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.list-group::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list-group::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.list-group::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.list-group::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive text sizes */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .btn {
+    font-size: 0.875rem;
+  }
+}
+
+/* Animation for new todos */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.todo-item-new {
+  animation: slideIn 0.3s ease;
+}
