@@ -24,7 +24,7 @@ const AppNavbar = () => {
     <Navbar bg="primary" variant="dark" expand="lg" className="mb-4">
       <Container>
         <Navbar.Brand href="/" className="fw-bold">
-          📝 Todo App
+           Todo App
         </Navbar.Brand>
         
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
