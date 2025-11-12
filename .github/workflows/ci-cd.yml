@@ -1,0 +1,90 @@
+name: CI/CD
+
+on:
+  push:
+    branches: 
+      - dev      
+  pull_request:
+    branches:
+      - main     
+
+jobs:
+
+  
+  backend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+
+  
+  frontend-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Build frontend
+        run: npm run build
+
+  
+  docker-build-and-push:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'  
+    needs: [backend-check, frontend-check]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build & push backend image
+        run: |
+          docker build -t ugurtiras/todo-app-backend:dev ./backend
+          docker push ugurtiras/todo-app-backend:dev
+      - name: Build & push frontend image
+        run: |
+          docker build -t ugurtiras/todo-app-frontend:dev ./frontend
+          docker push ugurtiras/todo-app-frontend:dev
+
+  
+  deploy-to-ec2:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  
+    needs: [backend-check, frontend-check]
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_DEPLOY_KEY }}
+          script: |
+            cd ~/todo-app
+            # Prod image’ları çek
+            docker pull ugurtiras/todo-app-backend:latest
+            docker pull ugurtiras/todo-app-frontend:latest
+            # Container’ları ayağa kaldır
+            docker-compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker image prune -f
