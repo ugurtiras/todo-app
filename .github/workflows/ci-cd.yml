@@ -46,7 +46,7 @@ jobs:
         run: npm run build
 
   docker-build-and-push:
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: [backend-check, frontend-check]
     steps:
@@ -59,12 +59,22 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build & push backend image
         run: |
-          docker build -t ugurtiras/todo-app-backend:dev ./backend
-          docker push ugurtiras/todo-app-backend:dev
+          if [ "${GITHUB_REF##*/}" == "dev" ]; then
+            TAG=dev
+          else
+            TAG=latest
+          fi
+          docker build -t ugurtiras/todo-app-backend:$TAG ./backend
+          docker push ugurtiras/todo-app-backend:$TAG
       - name: Build & push frontend image
         run: |
-          docker build -t ugurtiras/todo-app-frontend:dev ./frontend
-          docker push ugurtiras/todo-app-frontend:dev
+          if [ "${GITHUB_REF##*/}" == "dev" ]; then
+            TAG=dev
+          else
+            TAG=latest
+          fi
+          docker build -t ugurtiras/todo-app-frontend:$TAG ./frontend
+          docker push ugurtiras/todo-app-frontend:$TAG
 
   deploy-to-ec2:
     if: github.ref == 'refs/heads/main'
